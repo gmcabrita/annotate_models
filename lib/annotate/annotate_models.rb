@@ -377,7 +377,13 @@ module AnnotateModels
         "#\n# CHECK Constraints\n#\n"
       end
 
-      constraints = retrieve_constraints_from_table(klass)
+      constraints = retrieve_constraints_from_table(klass).reject { |constraint|
+        if (column_name = constraint["check_clause"].match(/^([[:alpha:]_][[:alnum:]_]*|("[^"]*")+) IS NOT NULL$/i)&.captures&.first)
+          klass.columns.find { |column| column.name == column_name }.null
+        else
+          false
+        end
+      }
       return '' if constraints.empty?
 
       max_size = constraints.collect{|constraint| constraint["constraint_name"].size}.max + 1
