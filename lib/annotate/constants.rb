@@ -12,7 +12,7 @@ module Annotate
     ].freeze
 
     FLAG_OPTIONS = [
-      :show_indexes, :simple_indexes, :include_version, :exclude_tests,
+      :show_indexes, :show_constraints, :simple_indexes, :include_version, :exclude_tests,
       :exclude_fixtures, :exclude_factories, :ignore_model_sub_dir,
       :format_bare, :format_rdoc, :format_yard, :format_markdown, :sort, :force, :frozen,
       :trace, :timestamp, :exclude_serializers, :classified_sort,

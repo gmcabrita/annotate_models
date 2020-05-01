@@ -192,6 +192,12 @@ module Annotate
         env['show_indexes'] = 'yes'
       end
 
+      option_parser.on('-sc',
+                       '--show-constraints',
+                       "List the table's database constraints in the annotation") do
+        env['show_constraints'] = 'yes'
+      end
+
       option_parser.on('-s',
                        '--simple-indexes',
                        "Concat the column's related indexes in the annotation") do

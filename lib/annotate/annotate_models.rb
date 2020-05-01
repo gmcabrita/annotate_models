@@ -318,6 +318,10 @@ module AnnotateModels
         info << get_foreign_key_info(klass, options)
       end
 
+      if options[:show_constraints] && klass.table_exists?
+        info << get_constraints_info(klass, options)
+      end
+
       info << get_schema_footer_text(klass, options)
     end
 
@@ -364,6 +368,60 @@ module AnnotateModels
       end
 
       index_info
+    end
+
+    def get_constraints_info(klass, options = {})
+      constraints_info = if options[:format_markdown]
+        "#\n# ### CHECK Constraints\n#\n"
+      else
+        "#\n# CHECK Constraints\n#\n"
+      end
+
+      constraints = retrieve_constraints_from_table(klass)
+      return '' if constraints.empty?
+
+      max_size = constraints.collect{|constraint| contraint["constraint_name"].size}.max + 1
+      constraints.sort_by {|c| c["constraint_name"]}.each do |constraint|
+        constraints_info << if options[:format_markdown]
+          final_constraint_string_in_markdown(constraint)
+        else
+          final_constraint_string(constraint, max_size)
+        end
+      end
+
+      constraints_info
+    end
+
+    def retrieve_constraints_from_table(klass)
+      table_name = klass.table_name
+      return [] unless table_name
+
+      klass.connection.execute("select * from information_schema.table_constraints tc join information_schema.check_constraints cc on cc.constraint_name = tc.constraint_name and cc.constraint_schema = tc.constraint_schema where tc.table_name = '#{klass.table_name}' and tc.constraint_type = 'CHECK'").to_a
+    end
+
+    def final_constraint_string_in_markdown(constraint)
+      details = sprintf(
+        "%s%s%s",
+        index_unique_info(index, :markdown),
+        index_where_info(index, :markdown),
+        index_using_info(index, :markdown)
+      ).strip
+      details = " (#{details})" unless details.blank?
+
+      sprintf(
+        "# * `%s`:\n#     * **`%s`**\n",
+        constraint["constraint_name"],
+        details,
+        constraint["check_clause"]
+      )
+    end
+
+    def final_constraint_string(constraint, max_size)
+      sprintf(
+        "#  %-#{max_size}.#{max_size}s %s",
+        constraint["constraint_name"],
+        constraint["check_clause"]
+      ).rstrip + "\n"
     end
 
     def get_col_type(col)

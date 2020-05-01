@@ -21,6 +21,7 @@ task annotate_models: :environment do
   options[:show_foreign_keys] = Annotate::Helpers.true?(ENV['show_foreign_keys'])
   options[:show_complete_foreign_keys] = Annotate::Helpers.true?(ENV['show_complete_foreign_keys'])
   options[:show_indexes] = Annotate::Helpers.true?(ENV['show_indexes'])
+  options[:show_constraints] = Annotate::Helpers.true?(ENV['show_constraints'])
   options[:simple_indexes] = Annotate::Helpers.true?(ENV['simple_indexes'])
   options[:model_dir] = ENV['model_dir'] ? ENV['model_dir'].split(',') : ['app/models']
   options[:root_dir] = ENV['root_dir']
