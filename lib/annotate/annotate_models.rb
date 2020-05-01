@@ -380,7 +380,7 @@ module AnnotateModels
       constraints = retrieve_constraints_from_table(klass)
       return '' if constraints.empty?
 
-      max_size = constraints.collect{|constraint| contraint["constraint_name"].size}.max + 1
+      max_size = constraints.collect{|constraint| constraint["constraint_name"].size}.max + 1
       constraints.sort_by {|c| c["constraint_name"]}.each do |constraint|
         constraints_info << if options[:format_markdown]
           final_constraint_string_in_markdown(constraint)
