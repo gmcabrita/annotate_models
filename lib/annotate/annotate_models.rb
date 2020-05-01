@@ -379,7 +379,7 @@ module AnnotateModels
 
       constraints = retrieve_constraints_from_table(klass).reject { |constraint|
         if (column_name = constraint["check_clause"].match(/^([[:alpha:]_][[:alnum:]_]*|("[^"]*")+) IS NOT NULL$/i)&.captures&.first)
-          klass.columns.find { |column| column.name == column_name }.null
+          !klass.columns.find { |column| column.name == column_name }.null
         else
           false
         end
